@@ -1,0 +1,109 @@
+import java.lang.Math;
+import javax.swing.JOptionPane;
+
+public class SistemaD {
+
+public static void main(String[] args) {
+
+   int passo_f = 0;
+   int n = 100;
+   int lim = 4000000;
+   float dif = 1f;
+   float crit = 1.e-4f;
+   float fator = 1.8f;
+
+   float[] xi_f = new float[101];
+   float[] x_f = new float[101];
+   for(int k=1; k <= 100; k++)
+     xi_f[k] = 0;
+   for(int k=1; k <= 100; k++)
+     x_f[k] = xi_f[k];
+
+   while (passo_f < lim && dif > crit ) {
+     passo_f++;
+
+     int i = 1;
+     x_f[i]=(1-fator)*xi_f[i]+fator*(150-x_f[i+1]);
+
+     for (i=2;i <= n/2; i++)
+       x_f[i]=(1-fator)*xi_f[i]+fator*((100-x_f[i-1]-x_f[i+1]-x_f[i+50])/3);
+
+     for (i=n/2+1; i <= n-1; i++)
+       x_f[i]=(1-fator)*xi_f[i]+fator*((200-x_f[i-50]-x_f[i-1]-x_f[i+1])/3);
+
+     i=n;
+     x_f[i]=(1-fator)* xi_f[i]+fator*(300-x_f[i-1]);
+
+     dif = Math.abs(x_f[1]-xi_f[1]);
+
+     for (int controle = 1; controle < 101; controle++)
+       dif = Math.max(Math.abs(x_f[controle]-xi_f[controle]), dif);
+
+     for(int a=1; a <= 100; a++)
+       xi_f[a] = x_f[a];
+
+   }
+
+   System.out.println("Passo = " + passo_f + "\txi_f[1] = " + xi_f[1]);
+
+
+
+
+
+
+
+
+
+   int dpasso = 0;
+   lim = 2000;
+   double dcrit = 1.e-4;
+   double ddif = 1;
+   n = 100;
+   double dfator = 1.8;
+
+   double[] xi_d = new double[101];
+   double[] x_d = new double[101];
+   for(int k=1; k <= 100; k++)
+     xi_d[k] = 0;
+   for(int k=1; k <= 100; k++)
+     x_d[k] = xi_d[k];
+
+   while (dpasso < lim && ddif > dcrit ) {
+
+     dpasso++;
+
+     int i = 1;
+     x_d[i]=(1-dfator)*xi_d[i]+dfator*(150-x_d[i+1]);
+
+     for (i=2;i <= n/2; i++)
+       x_d[i]=(1-dfator)*xi_d[i]+dfator*((100-x_d[i-1]-x_d[i+1]-x_d[i+50])/3);
+
+     for (i=n/2+1; i <= n-1; i++)
+       x_d[i]=(1-dfator)*xi_d[i]+dfator*((200-x_d[i-50]-x_d[i-1]-x_d[i+1])/3);
+
+     i=n;
+     x_d[i]=(1-dfator)* xi_d[i]+dfator*(300-x_d[i-1]);
+
+     ddif = Math.abs(x_d[1]-xi_d[1]);
+
+     for (int controle = 1; controle < 101; controle++)
+       ddif = Math.max(Math.abs(x_d[controle]-xi_d[controle]), ddif);
+
+     for(int a=1; a <= 100; a++)
+       xi_d[a] = x_d[a];
+   }
+
+   System.out.println("Passo = " + dpasso + "\txi_d[1] = " + xi_d[1]);
+   JOptionPane.showMessageDialog(null, String.format("Passo = " + passo_f + "\t xi_f[1] = %.5f \n", (float)xi_f[1]));
+   JOptionPane.showMessageDialog(null, String.format("Passo = " + dpasso + "\t xi_d[1] = %.5f \n", (double)xi_d[1]));
+
+   double erroArredondamento = ((Math.abs(xi_f[1] - xi_d[1])/xi_d[1])*100);
+   for (int controle = 1; controle < 101; controle++)
+     erroArredondamento = Math.max(((Math.abs(xi_f[controle] - xi_d[controle])/xi_d[controle])*100), erroArredondamento);
+
+
+
+   JOptionPane.showMessageDialog(null, String.format("Erro de arredondamento relativo = %.20f \n", (double)erroArredondamento));
+
+}
+}
